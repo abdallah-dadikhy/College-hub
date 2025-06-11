@@ -174,44 +174,44 @@ class ProfileController extends Controller
         return response()->json($student);
     }
 
-    public function createStudent(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'full_name' => 'required|string',
-            'university_id' => 'required|string',
-            'mother_name' => 'required|string',
-            'birth_date' => 'required|date',
-            'birth_place' => 'required|string',
-            'department' => 'required|string',
-            'high_school_gpa' => 'required|numeric',
-            'photo_path' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
-        ]);
-        $exists = StudentProfile::where('university_id', $request->university_id)->exists();
+        public function createStudent(Request $request)
+        {
+            $validator = Validator::make($request->all(), [
+                'full_name' => 'required|string',
+                'university_id' => 'required|string',
+                'mother_name' => 'required|string',
+                'birth_date' => 'required|date',
+                'birth_place' => 'required|string',
+                'department' => 'required|string',
+                'high_school_gpa' => 'required|numeric',
+                'photo_path' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            ]);
+            $exists = StudentProfile::where('university_id', $request->university_id)->exists();
 
-        if ($exists) {
-            return response()->json(['message' => 'الملف الشخصي موجود مسبقاً لهذا الرقم الجامعي'], 409);
+            if ($exists) {
+                return response()->json(['message' => 'الملف الشخصي موجود مسبقاً لهذا الرقم الجامعي'], 409);
+            }
+            $studentExists = Student::where('university_id', $request->university_id)->exists();
+
+            if (!$studentExists) {
+                return response()->json(['message' => 'الطالب غير موجود في قاعدة البيانات، الرجاء إضافته أولاً.'], 422);
+            }
+
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+            $data = $validator->validated();
+
+            if ($request->hasFile('profile_image')) {
+                $path = $request->file('profile_image')->store('students_profiles', 'public');
+                $data['profile_image'] = $path;
+            }
+
+            $student = StudentProfile::create($data);
+            return response()->json($student, 201);
         }
-        $studentExists = Student::where('university_id', $request->university_id)->exists();
-
-        if (!$studentExists) {
-            return response()->json(['message' => 'الطالب غير موجود في قاعدة البيانات، الرجاء إضافته أولاً.'], 422);
-        }
-
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $data = $validator->validated();
-
-        if ($request->hasFile('profile_image')) {
-            $path = $request->file('profile_image')->store('students_profiles', 'public');
-            $data['profile_image'] = $path;
-        }
-
-        $student = StudentProfile::create($data);
-        return response()->json($student, 201);
-    }
 
     public function updateStudent(Request $request, $id)
     {
