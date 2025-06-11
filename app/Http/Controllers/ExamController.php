@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ExamController extends Controller
 {
@@ -45,36 +46,61 @@ public function showByCourse($course_id)
     return response()->json($exams);
 }
 
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'course_id' => 'required|exists:courses,id',
-            'exam_date' => 'required|date',
-            'start_time' => 'required',
-            'end_time' => 'required',
-            'type' => 'required|in:midterm,final',
-                'target_year' => 'required|string', 
-        ]);
+   public function store(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'course_id' => 'required|exists:courses,id',
+        'exam_date' => 'required|date',
+        'start_time' => 'required',
+        'end_time' => 'required',
+        'type' => 'required|in:midterm,final',
+        'target_year' => 'required|string',
+    ]);
 
-        $exam = Exam::create($data);
-        return response()->json(['message' => 'تم إنشاء الامتحان بنجاح', 'exam' => $exam], 201);
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'خطأ في التحقق من البيانات',
+            'errors' => $validator->errors()
+        ], 422);
     }
+
+    $exam = Exam::create($validator->validated());
+
+    return response()->json([
+        'message' => 'تم إنشاء الامتحان بنجاح',
+        'exam' => $exam
+    ], 201);
+}
     public function update(Request $request, $id)
-    {
-        $exam = Exam::findOrFail($id);
-
-        $data = $request->validate([
-            'course_id' => 'sometimes|exists:courses,id',
-            'exam_date' => 'sometimes|date',
-            'start_time' => 'sometimes',
-            'end_time' => 'sometimes',
-            'type' => 'sometimes|in:midterm,final',
-                'target_year' => 'required|string', 
-        ]);
-
-        $exam->update($data);
-        return response()->json(['message' => 'تم تحديث الامتحان بنجاح', 'exam' => $exam]);
+{
+    $exam = Exam::find($id);
+    if(!$exam){
+        return response()->json(['message' => ' exam not found '], 404);
     }
+
+    $validator = Validator::make($request->all(), [
+        'course_id' => 'sometimes|exists:courses,id',
+        'exam_date' => 'sometimes|date',
+        'start_time' => 'sometimes',
+        'end_time' => 'sometimes',
+        'type' => 'sometimes|in:midterm,final',
+        'target_year' => 'required|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'خطأ في التحقق من البيانات',
+            'errors' => $validator->errors()
+        ], 422);
+    }
+
+    $exam->update($validator->validated());
+
+    return response()->json([
+        'message' => 'تم تحديث الامتحان بنجاح',
+        'exam' => $exam
+    ]);
+}
 
     public function destroy($id)
     {

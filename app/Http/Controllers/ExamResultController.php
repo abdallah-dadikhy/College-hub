@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\ExamResult;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 class ExamResultController extends Controller
 {
    public function index()
@@ -36,32 +36,59 @@ public function show($id)
 }
 
     public function store(Request $request)
-    {
-        $data = $request->validate([
-            'exam_id' => 'required|exists:exams,id',
-            'student_id' => 'required|exists:students,id',
-            'score' => 'nullable|numeric|min:0|max:100',
-        ]);
+{
+    $validator = Validator::make($request->all(), [
+        'exam_id' => 'required|exists:exams,id',
+        'student_id' => 'required|exists:students,id',
+        'score' => 'nullable|numeric|min:0|max:100',
+    ]);
 
-        $result = ExamResult::create($data);
-        return response()->json(['message' => 'تم حفظ النتيجة بنجاح', 'result' => $result], 201);
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'خطأ في التحقق من البيانات',
+            'errors' => $validator->errors(),
+        ], 422);
     }
 
-    public function update(Request $request, $id)
-    {
-        $result = ExamResult::find($id);
-        if(!$result){
-            return response()->json('exam result not found');
-        }
-        $data = $request->validate([
-            'exam_id' => 'sometimes|exists:exams,id',
-            'student_id' => 'sometimes|exists:students,id',
-            'score' => 'nullable|numeric|min:0|max:100',
-        ]);
+    $result = ExamResult::create($validator->validated());
 
-        $result->update($data);
-        return response()->json(['message' => 'تم تحديث النتيجة بنجاح', 'result' => $result]);
+    return response()->json([
+        'message' => 'تم حفظ النتيجة بنجاح',
+        'result' => $result,
+    ], 201);
+}
+
+ public function update(Request $request, $id)
+{
+    $result = ExamResult::find($id);
+
+    if (!$result) {
+        return response()->json([
+            'message' => 'لم يتم العثور على النتيجة المطلوبة'
+        ], 404);
     }
+
+    $validator = Validator::make($request->all(), [
+        'exam_id' => 'sometimes|exists:exams,id',
+        'student_id' => 'sometimes|exists:students,id',
+        'score' => 'nullable|numeric|min:0|max:100',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'message' => 'خطأ في التحقق من البيانات',
+            'errors' => $validator->errors(),
+        ], 422);
+    }
+
+    $result->update($validator->validated());
+
+    return response()->json([
+        'message' => 'تم تحديث النتيجة بنجاح',
+        'result' => $result,
+    ]);
+}
+
 
     public function destroy($id)
     {

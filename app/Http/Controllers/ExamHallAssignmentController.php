@@ -17,8 +17,11 @@ public function distribute(Request $request)
     $request->validate([
         'exam_id' => 'required|exists:exams,id',
     ]);
-
-    $exam = Exam::findOrFail($request->exam_id);
+    
+    $exam = Exam::find($request->exam_id);
+        if(!$exam){
+        return response()->json(['message' => ' exam not found '], 404);
+    }
     $targetYear = $exam->target_year;
 
     // جلب معلومات الامتحانات التي بنفس التاريخ والوقت ولكن لسنة مختلفة
