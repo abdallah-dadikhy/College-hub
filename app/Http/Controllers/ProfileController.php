@@ -204,9 +204,9 @@ class ProfileController extends Controller
 
             $data = $validator->validated();
 
-            if ($request->hasFile('profile_image')) {
-                $path = $request->file('profile_image')->store('students_profiles', 'public');
-                $data['profile_image'] = $path;
+            if ($request->hasFile('photo_path')) {
+                $path = $request->file('photo_path')->store('students_profiles', 'public');
+                $data['photo_path'] = $path;
             }
 
             $student = StudentProfile::create($data);
