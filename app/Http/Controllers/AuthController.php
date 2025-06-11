@@ -77,7 +77,7 @@ class AuthController extends Controller
                 break;
         }
 
-        return response()->json(['message' => 'تم إنشاء الحساب بنجاح'], 201);
+        return response()->json([$user,'message' => 'تم إنشاء الحساب بنجاح'], 201);
     }
 
     // تسجيل دخول
