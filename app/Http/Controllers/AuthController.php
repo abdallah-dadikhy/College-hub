@@ -9,6 +9,7 @@ use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Admin;
 use App\Models\Staff;
+use Illuminate\Database\Eloquent\Casts\Json;
 
 class AuthController extends Controller
 {
@@ -137,5 +138,9 @@ class AuthController extends Controller
         $request->user()->tokens()->delete();
         return response()->json(['message' => 'تم تسجيل الخروج بنجاح']);
     }
+     public function users(){
+        $users=User::all();
+        return response()->json($users);
+     }
 }
 
