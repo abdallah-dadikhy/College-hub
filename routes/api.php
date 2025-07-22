@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 ##--------------------------------------------------- Auth module
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
-Route::post('users', [AuthController::class, 'users']);
+Route::get('users', [AuthController::class, 'users']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -82,7 +82,6 @@ Route::post('students', [ProfileController::class, 'createStudent']);
 Route::put('students/{id}', [ProfileController::class, 'updateStudent']); 
 Route::delete('students/{id}', [ProfileController::class, 'deleteStudent']);
 
-Route::get('users', [UserController::class, 'getalluser']);
 
 
 Route::middleware('auth:sanctum')->get('student/photo', [ProfileController::class, 'getStudentProfilePhoto']);
