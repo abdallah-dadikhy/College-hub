@@ -11,6 +11,7 @@ use App\Http\Controllers\ExamHallAssignmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\ClassroomController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +81,9 @@ Route::get('students/{id}', [ProfileController::class, 'getStudent']);
 Route::post('students', [ProfileController::class, 'createStudent']);
 Route::put('students/{id}', [ProfileController::class, 'updateStudent']); 
 Route::delete('students/{id}', [ProfileController::class, 'deleteStudent']);
+
+Route::get('users', [UserController::class, 'getalluser']);
+
 
 Route::middleware('auth:sanctum')->get('student/photo', [ProfileController::class, 'getStudentProfilePhoto']);
 
