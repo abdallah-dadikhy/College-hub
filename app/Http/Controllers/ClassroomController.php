@@ -9,7 +9,7 @@ class ClassroomController extends Controller
 {
     public function index(){
         $classroom=Classroom::all();
-        return response()->json(['message'=>'all classrooms  successfully','courses'=>$classroom],200);
+        return response()->json(['message'=>'all classrooms  successfully','classroom'=>$classroom],200);
     }
 
     public function store(Request $request){

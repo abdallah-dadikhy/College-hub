@@ -8,6 +8,7 @@ use App\Models\EmployeeProfile;
 use App\Models\TeacherProfile;
 use App\Models\StudentProfile;
 use App\Models\Student;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
