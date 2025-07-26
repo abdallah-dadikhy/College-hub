@@ -32,6 +32,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 Route::get('users', [AuthController::class, 'users']);
+Route::get('teachers', [AuthController::class, 'teachers']);
+Route::get('Staff', [AuthController::class, 'Staff']);
+Route::get('Admin', [AuthController::class, 'Admin']);
 
 
 Route::middleware('auth:sanctum')->group(function () {

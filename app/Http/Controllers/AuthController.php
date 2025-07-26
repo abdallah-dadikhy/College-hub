@@ -142,5 +142,17 @@ class AuthController extends Controller
         $users=User::all();
         return response()->json($users);
      }
+     public function teachers(){
+        $teacher=Teacher::all();
+        return response()->json($teacher);
+     }
+        public function Staff(){
+        $Staff=Staff::all();
+        return response()->json($Staff);
+     }
+             public function Admin(){
+        $Admin=Admin::all();
+        return response()->json($Admin);
+     }
 }
 
