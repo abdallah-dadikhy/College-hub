@@ -168,7 +168,7 @@ class ProfileController extends Controller
 
     public function getStudent($id)
     {
-        $student = StudentProfile::find($id);
+        $student = StudentProfile::find($id)->with(['student:id,university_id,year'])->get();
         if (!$student) {
             return response()->json(['message' => 'الطالب غير موجود'], 404);
         }
