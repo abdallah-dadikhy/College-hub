@@ -162,7 +162,7 @@ class ProfileController extends Controller
 
     public function getAllStudents()
     {
-        $students = StudentProfile::all();
+         $students = StudentProfile::with(['student:id,university_id,year'])->get();
         return response()->json($students);
     }
 
